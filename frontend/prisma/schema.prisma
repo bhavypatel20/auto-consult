@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Car {
+  id                String    @id @default(uuid())
+  clerkUserId       String    
+  brand             String
+  model             String
+  year              Int
+  fuelType          String    
+  kmDriven          Int
+  registrationNum   String
+  status            String    @default("Available") 
+  
+  sellerName        String?
+  sellerAddress     String?
+  
+  purchasePrice     Float
+  expectedSellPrice Float
+  finalSellPrice    Float?
+  
+  images            String?   
+  documents         String?   
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  expenses          Expense[]
+  deals             Deal[]
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  carId       String
+  car         Car      @relation(fields: [carId], references: [id])
+  date        DateTime @default(now())
+  amount      Float
+  description String
+  expenseType String   
+  paidBy      String   @default("Company")
+}
+
+model Customer {
+  id           String    @id @default(uuid())
+  name         String
+  phone        String
+  address      String?
+  type         String    
+  
+  stage        String    @default("Inquiry") 
+  notes        String?
+  nextFollowUp DateTime?
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  deals        Deal[]
+  inquiries    CustomerInquiry[]
+  preference   CustomerPreference?
+  interactions CustomerInteraction[]
+}
+
+model CustomerInquiry {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  notes      String?
+}
+
+model CustomerPreference {
+  id              String   @id @default(uuid())
+  customerId      String   @unique
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  // Budget
+  budgetMin       Float?
+  budgetMax       Float?
+  
+  // Car Preferences
+  carType         String?  // HATCHBACK, SEDAN, SUV, LUXURY
+  preferredBrands String?  // Comma separated
+  fuelType        String?  // PETROL, DIESEL, CNG, ELECTRIC
+  minYear         Int?
+  maxKmDriven     Int?
+  
+  // Usage
+  purpose         String?  // PERSONAL, FAMILY, COMMERCIAL, RESALE
+  usageType       String?  // CITY, HIGHWAY, MIXED
+  familySize      Int?
+  seatingCapacity Int?     // 5, 7
+  
+  // Financial
+  paymentMode     String?  // CASH, FINANCE, LOAN
+  loanRequired    Boolean  @default(false)
+  downPayment     Float?
+  exchangeRequired Boolean @default(false)
+  
+  // Priority
+  priority        String?  // PRICE, MILEAGE, COMFORT, BRAND, RESALE
+  
+  // Behavior
+  visitCount      Int      @default(0)
+  lastVisitDate   DateTime @default(now())
+}
+
+model CustomerInteraction {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  carId      String?
+  type       String   // VISIT, CALL, WHATSAPP 
+  date       DateTime @default(now())
+}
+
+
+model Deal {
+  id             String    @id @default(uuid())
+  customerId     String
+  customer       Customer  @relation(fields: [customerId], references: [id])
+  carId          String
+  car            Car       @relation(fields: [carId], references: [id])
+  
+  dealDate       DateTime  @default(now())
+  finalPrice     Float
+  paymentStatus  String    @default("Pending") 
+  agreementFiles String?
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}

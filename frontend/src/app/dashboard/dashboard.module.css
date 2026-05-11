@@ -69,3 +69,50 @@
   align-items: center;
   margin-bottom: 32px;
 }
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    padding: 12px 16px;
+    z-index: 1000;
+    overflow-x: auto;
+    border-right: none;
+    border-top: 1px solid var(--border-light);
+    gap: 16px;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .nav {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .navLink {
+    padding: 12px;
+    font-size: 0; /* Hides the text on mobile */
+    gap: 0;
+    justify-content: center;
+  }
+
+  .main {
+    padding: 16px;
+    margin-bottom: 80px; /* Space for the bottom nav */
+  }
+
+  .header {
+    margin-bottom: 24px;
+  }
+}

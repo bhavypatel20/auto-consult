@@ -32,7 +32,7 @@ export default async function CustomersPage() {
               </tr>
             </thead>
             <tbody>
-              {customers.map((cust) => (
+              {customers.map((cust: any) => (
                 <tr key={cust.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                   <td style={{ padding: '16px 24px' }}>
                     <Link href={`/dashboard/customers/${cust.id}`} style={{ color: 'var(--primary)', textDecoration: 'none' }}>
